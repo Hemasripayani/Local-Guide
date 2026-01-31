@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuideNow - Connect with Local Guides Instantly</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #FFC107;
+            --primary-dark: #FFA000;
+            --secondary: #2196F3;
+            --success: #4CAF50;
+            --danger: #F44336;
+            --text-dark: #212529;
+            --text-light: #6C757D;
+            --bg-light: #F8F9FA;
+            --border: #E9ECEF;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            overflow-x: hidden;
+        }
+        
+        /* App Container */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        /* Frames */
+        .frames-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .frame {
+            position: absolute;
+            width: 100%;
+            min-height: 100vh;
+            background: white;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .frame.active {
+            transform: translateX(0);
+            position: relative;
+        }
+        
+        .frame.left {
+            transform: translateX(-100%);
+        }
+        
+        .frame.right {
+            transform: translateX(100%);
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .top-bar h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        /* Frame Content */
+        .frame-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        
+        .hero-section h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .hero-section p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        
+        /* Search Card */
+        .search-card {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-wrapper {
+            margin-bottom: 1rem;
+        }
+        
+        .input-wrapper:last-child {
+            margin-bottom: 0;
+        }
+        
+        .input-wrapper label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+        
+        .budget-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .budget-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 10px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        
+        /* Buttons */
+        .primary-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .primary-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .primary-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .primary-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Filter Chips */
+        .filter-chips {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-chips::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .chip {
+            padding: 0.5rem 1rem;
+            background: var(--bg-light);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .chip.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        /* Guide Cards */
+        .guide-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .guide-card:active {
+            transform: scale(0.98);
+        }
+        
+        .guide-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .guide-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .guide-info {
+            flex: 1;
+        }
+        
+        .guide-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+        
+        .guide-location {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+        
+        .guide-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .star {
+            color: var(--primary);
+            font-size: 0.85rem;
+        }
+        
+        .rating-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .review-count {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .guide-meta {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        
+        .guide-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .guide-price {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+        
+        .price-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .verified-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.625rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        
+        /* Guide Details */
+        .guide-detail-header {
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            padding: 2rem 1.25rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .guide-detail-avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border: 4px solid white;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        
+        .guide-detail-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .guide-detail-location {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        .detail-section {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .detail-section h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 12px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .about-text {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .specialties {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .specialty-tag {
+            padding: 0.5rem 0.875rem;
+            background: #E3F2FD;
+            color: #1976D2;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        /* Bottom Action Bar */
+        .bottom-bar {
+            padding: 1rem 1.25rem;
+            background: white;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .price-info {
+            flex: 1;
+        }
+        
+        .price-large {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+        
+        .book-btn {
+            padding: 0.875rem 2rem;
+            background: var(--primary);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        /* Confirmation */
+        .confirmation-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--success);
+            border-radius: 50%;
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        
+        .confirmation-title {
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .confirmation-subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+        
+        .booking-details {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .detail-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+        
+        .total-label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .total-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .loading-overlay.show {
+            display: flex;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 300px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        
+        /* Alert Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert-success {
+            background: #D4EDDA;
+            color: #155724;
+            border: 1px solid #C3E6CB;
+        }
+        
+        .alert-error {
+            background: #F8D7DA;
+            color: #721C24;
+            border: 1px solid #F5C6CB;
+        }
+        
+        .alert-info {
+            background: #D1ECF1;
+            color: #0C5460;
+            border: 1px solid #BEE5EB;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-text {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+        
+        /* Feature Highlights */
+        .features-list {
+            margin-top: 2rem;
+            padding: 0 0.5rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .feature-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+        
+        .feature-content p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="frames-wrapper">
+            
+            <!-- Frame 1: Home/Search -->
+            <div class="frame active" id="frame1">
+                <div class="top-bar">
+                    <div></div>
+                    <h2>GuideNow</h2>
+                    <button class="menu-btn">☰</button>
+                </div>
+                
+                <div class="frame-content">
+                    <div class="hero-section">
+                        <div class="app-logo">🗺️</div>
+                        <h1>Find Your Perfect Guide</h1>
+                        <p>Connect with verified local guides for safe, affordable, and personalized travel experiences</p>
+                    </div>
+                    
+                    <div id="searchAlert" class="alert"></div>
+                    
+                    <div class="search-card">
+                        <div class="input-wrapper">
+                            <label>📍 Destination City</label>
+                            <input type="text" class="input-field" id="cityInput" placeholder="e.g., Barcelona, Tokyo, Paris">
+                        </div>
+                        
+                        <div class="input-wrapper">
+                            <label>📅 Travel Date</label>
+                            <input type="date" class="input-field" id="dateInput">
+                        </div>
+                        
+                        <div class="input-wrapper">
+                            <label>🕒 Preferred Time</label>
+                            <input type="time" class="input-field" id="timeInput" value="10:00">
+                        </div>
+                        
+                        <div class="input-wrapper">
+                            <label>💰 Budget per Day</label>
+                            <input type="range" id="budgetSlider" min="20" max="200" value="80" step="10">
+                            <div class="budget-display">
+                                <span style="font-size: 0.85rem; color: var(--text-light);">Affordable to Premium</span>
+                                <span class="budget-value">$<span id="budgetDisplay">80</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="primary-btn" onclick="searchGuides()">
+                        <span>Search Available Guides</span>
+                        <span>→</span>
+                    </button>
+                    
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-content">
+                                <h4>Verified Guides Only</h4>
+                                <p>All guides are background-checked and verified for your safety</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">💰</div>
+                            <div class="feature-content">
+                                <h4>Transparent Pricing</h4>
+                                <p>See exact costs upfront with no hidden fees</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">⭐</div>
+                            <div class="feature-content">
+                                <h4>Real Reviews</h4>
+                                <p>Read authentic reviews from verified travelers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Frame 2: Guide List -->
+            <div class="frame right" id="frame2">
+                <div class="top-bar">
+                    <button class="back-btn" onclick="goToFrame(1)">←</button>
+                    <h2><span id="resultsCount">0</span> Guides Found</h2>
+                    <div></div>
+                </div>
+                
+                <div class="frame-content">
+                    <div class="filter-chips">
+                        <div class="chip active" onclick="filterGuides('all')">All</div>
+                        <div class="chip" onclick="filterGuides('top-rated')">Top Rated</div>
+                        <div class="chip" onclick="filterGuides('low-price')">Budget Friendly</div>
+                    </div>
+                    
+                    <div id="guidesList"></div>
+                </div>
+            </div>
+            
+            <!-- Frame 3: Guide Details -->
+            <div class="frame right" id="frame3">
+                <div class="top-bar">
+                    <button class="back-btn" onclick="goToFrame(2)">←</button>
+                    <h2>Guide Profile</h2>
+                    <div></div>
+                </div>
+                
+                <div class="frame-content" style="padding: 0;">
+                    <div class="guide-detail-header">
+                        <div class="guide-detail-avatar">👤</div>
+                        <div class="guide-detail-name" id="detailName"></div>
+                        <div class="guide-detail-location" id="detailLocation"></div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Performance Stats</h3>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-value" id="detailRating">4.9</div>
+                                <div class="stat-label">Rating</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="detailReviews">150+</div>
+                                <div class="stat-label">Reviews</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="detailTours">300+</div>
+                                <div class="stat-label">Tours</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>About This Guide</h3>
+                        <p class="about-text" id="detailBio">Passionate local guide with years of experience showing travelers the authentic side of the city.</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Languages</h3>
+                        <p class="about-text" id="detailLanguages">English, Spanish</p>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Specialties</h3>
+                        <div class="specialties" id="detailSpecialties">
+                            <span class="specialty-tag">🍜 Food Tours</span>
+                            <span class="specialty-tag">🏛️ Historical Sites</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-bar">
+                    <div class="price-info">
+                        <div style="font-size: 0.75rem; color: var(--text-light);">Total for 1 Day</div>
+                        <div class="price-large" id="detailPrice">$75</div>
+                    </div>
+                    <button class="book-btn" onclick="confirmBooking()">Book Now</button>
+                </div>
+            </div>
+            
+            <!-- Frame 4: Booking Confirmation -->
+            <div class="frame right" id="frame4">
+                <div class="top-bar">
+                    <div></div>
+                    <h2>Booking Summary</h2>
+                    <div></div>
+                </div>
+                
+                <div class="frame-content">
+                    <div class="confirmation-icon">✓</div>
+                    <h1 class="confirmation-title">Booking Confirmed!</h1>
+                    <p class="confirmation-subtitle">Your guide will contact you within 24 hours</p>
+                    
+                    <div class="booking-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Booking ID</span>
+                            <span class="detail-value" id="confirmBookingId">#12345</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Guide Name</span>
+                            <span class="detail-value" id="confirmGuide"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Location</span>
+                            <span class="detail-value" id="confirmCity"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value" id="confirmDate"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Time</span>
+                            <span class="detail-value" id="confirmTime"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Duration</span>
+                            <span class="detail-value">Full Day (8 hours)</span>
+                        </div>
+                        
+                        <div class="total-row">
+                            <span class="total-label">Total Paid</span>
+                            <span class="total-value" id="confirmPrice"></span>
+                        </div>
+                    </div>
+                    
+                    <button class="primary-btn" onclick="goToFrame(1)">
+                        <span>Book Another Guide</span>
+                    </button>
+                    
+                    <button class="primary-btn" style="background: white; color: var(--text-dark); border: 2px solid var(--border); margin-top: 1rem;">
+                        <span>📧 Email Confirmation</span>
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loadingText">Finding guides...</div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost/guidenow/api/';
+        const USE_MOCK_DATA = true; // Set to false when API is ready
+        
+        // State
+        let allGuides = [];
+        let filteredGuides = [];
+        let currentGuide = null;
+        let searchData = {};
+        let currentUser = { user_id: 1 }; // Mock user - replace with actual login
+        
+        // Mock data for demo
+        const mockGuides = [
+            { guide_id: 1, full_name: "Maria Santos", city: "Barcelona", country: "Spain", rating: 4.9, total_reviews: 127, price_per_day: 65, total_tours: 280, years_of_experience: 5, is_verified: true, bio: "Passionate local guide with 5+ years of experience. I love sharing the hidden gems of Barcelona!", languages_spoken: "Spanish, English, French", specialties: ["Food Tours", "Historical Sites", "Photography"] },
+            { guide_id: 2, full_name: "Kenji Tanaka", city: "Tokyo", country: "Japan", rating: 5.0, total_reviews: 203, price_per_day: 80, total_tours: 340, years_of_experience: 7, is_verified: true, bio: "Expert in Japanese culture and history. Let me show you authentic Tokyo!", languages_spoken: "Japanese, English", specialties: ["Cultural Tours", "Temple Visits", "Shopping"] },
+            { guide_id: 3, full_name: "Ahmed El-Sayed", city: "Cairo", country: "Egypt", rating: 4.8, total_reviews: 89, price_per_day: 45, total_tours: 190, years_of_experience: 4, is_verified: true, bio: "Egyptologist and tour guide specializing in ancient history and archaeology.", languages_spoken: "Arabic, English", specialties: ["Ancient History", "Archaeology", "Museums"] },
+            { guide_id: 4, full_name: "Sophie Dubois", city: "Paris", country: "France", rating: 4.9, total_reviews: 156, price_per_day: 75, total_tours: 310, years_of_experience: 6, is_verified: true, bio: "Art historian and food enthusiast. Experience Paris like a true Parisian!", languages_spoken: "French, English, Italian", specialties: ["Art Tours", "Wine Tasting", "Fashion"] },
+            { guide_id: 5, full_name: "Carlos Rodriguez", city: "Mexico City", country: "Mexico", rating: 4.7, total_reviews: 94, price_per_day: 50, total_tours: 220, years_of_experience: 3, is_verified: true, bio: "Local expert in Mexican culture, cuisine, and street art.", languages_spoken: "Spanish, English", specialties: ["Street Art", "Food Tours", "Night Life"] },
+            { guide_id: 6, full_name: "Priya Sharma", city: "Mumbai", country: "India", rating: 5.0, total_reviews: 178, price_per_day: 35, total_tours: 290, years_of_experience: 5, is_verified: true, bio: "Bollywood enthusiast and cultural guide. Discover the vibrant streets of Mumbai!", languages_spoken: "Hindi, English, Marathi", specialties: ["Bollywood", "Food Tours", "Markets"] }
+        ];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set min date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateInput').min = today;
+            document.getElementById('dateInput').value = today;
+            
+            // Budget slider
+            document.getElementById('budgetSlider').addEventListener('input', function() {
+                document.getElementById('budgetDisplay').textContent = this.value;
+            });
+        });
+        
+        // Navigation
+        function goToFrame(frameNumber) {
+            const frames = document.querySelectorAll('.frame');
+            frames.forEach((frame, index) => {
+                frame.classList.remove('active', 'left', 'right');
+                if (index + 1 < frameNumber) {
+                    frame.classList.add('left');
+                } else if (index + 1 > frameNumber) {
+                    frame.classList.add('right');
+                } else {
+                    frame.classList.add('active');
+                }
+            });
+        }
+        
+        // Show/hide loading
+        function showLoading(text = 'Loading...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+        
+        // Show alert
+        function showAlert(message, type = 'info') {
+            const alert = document.getElementById('searchAlert');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+        
+        // Search guides
+        async function searchGuides() {
+            const city = document.getElementById('cityInput').value.trim();
+            const date = document.getElementById('dateInput').value;
+            const time = document.getElementById('timeInput').value;
+            const budget = document.getElementById('budgetSlider').value;
+            
+            // Validation
+            if (!city) {
+                showAlert('Please enter a destination city', 'error');
+                return;
+            }
+            
+            if (!date) {
+                showAlert('Please select a travel date', 'error');
+                return;
+            }
+            
+            searchData = { city, date, time, budget };
+            
+            showLoading('Finding the best guides for you...');
+            
+            try {
+                let guides;
+                
+                if (USE_MOCK_DATA) {
+                    // Use mock data
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    guides = mockGuides.filter(g => 
+                        g.city.toLowerCase().includes(city.toLowerCase()) && 
+                        g.price_per_day <= parseInt(budget)
+                    );
+                } else {
+                    // Real API call
+                    const response = await fetch(API_BASE_URL + 'search_guides.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ city, budget, date })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        throw new Error(result.message || 'Failed to search guides');
+                    }
+                    
+                    guides = result.data;
+                }
+                
+                allGuides = guides;
+                filteredGuides = guides;
+                
+                if (guides.length > 0) {
+                    displayGuides(guides);
+                    goToFrame(2);
+                } else {
+                    showAlert('No guides found. Try adjusting your budget or city.', 'info');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Failed to search guides. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // Display guides
+        function displayGuides(guides) {
+            const container = document.getElementById('guidesList');
+            const countElement = document.getElementById('resultsCount');
+            
+            countElement.textContent = guides.length;
+            container.innerHTML = '';
+            
+            if (guides.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-title">No Guides Found</div>
+                        <div class="empty-text">Try adjusting your filters or search criteria</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            guides.forEach(guide => {
+                const card = document.createElement('div');
+                card.className = 'guide-card';
+                card.onclick = () => viewGuideDetails(guide);
+                
+                card.innerHTML = `
+                    <div class="guide-header">
+                        <div class="guide-avatar">👤</div>
+                        <div class="guide-info">
+                            <div class="guide-name">${guide.full_name}</div>
+                            <div class="guide-location">📍 ${guide.city}, ${guide.country}</div>
+                            <div class="guide-rating">
+                                <span class="star">★</span>
+                                <span class="rating-text">${guide.rating}</span>
+                                <span class="review-count">(${guide.total_reviews})</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guide-meta">
+                        ${guide.is_verified ? '<div class="meta-item"><span>✓</span><span>Verified</span></div>' : ''}
+                        <div class="meta-item"><span>🎯</span><span>${guide.total_tours}+ Tours</span></div>
+                        <div class="meta-item"><span>📅</span><span>${guide.years_of_experience} Years</span></div>
+                    </div>
+                    <div class="guide-footer">
+                        <div>
+                            <div class="guide-price">$${guide.price_per_day}</div>
+                            <div class="price-label">per day</div>
+                        </div>
+                        ${guide.is_verified ? '<span class="verified-badge">VERIFIED</span>' : ''}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Filter guides
+        function filterGuides(filter) {
+            // Update chip UI
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            let sorted = [...allGuides];
+            
+            switch(filter) {
+                case 'top-rated':
+                    sorted.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'low-price':
+                    sorted.sort((a, b) => a.price_per_day - b.price_per_day);
+                    break;
+                default:
+                    // all - keep original order
+                    break;
+            }
+            
+            filteredGuides = sorted;
+            displayGuides(sorted);
+        }
+        
+        // View guide details
+        function viewGuideDetails(guide) {
+            currentGuide = guide;
+            
+            document.getElementById('detailName').textContent = guide.full_name;
+            document.getElementById('detailLocation').textContent = `${guide.city}, ${guide.country}`;
+            document.getElementById('detailRating').textContent = guide.rating;
+            document.getElementById('detailReviews').textContent = guide.total_reviews + '+';
+            document.getElementById('detailTours').textContent = guide.total_tours + '+';
+            document.getElementById('detailPrice').textContent = '$' + guide.price_per_day;
+            document.getElementById('detailBio').textContent = guide.bio || 'Experienced local guide.';
+            document.getElementById('detailLanguages').textContent = guide.languages_spoken || 'English';
+            
+            // Specialties
+            const specialtiesContainer = document.getElementById('detailSpecialties');
+            specialtiesContainer.innerHTML = '';
+            
+            if (guide.specialties && guide.specialties.length > 0) {
+                guide.specialties.forEach(specialty => {
+                    const tag = document.createElement('span');
+                    tag.className = 'specialty-tag';
+                    tag.textContent = specialty;
+                    specialtiesContainer.appendChild(tag);
+                });
+            }
+            
+            goToFrame(3);
+        }
+        
+        // Confirm booking
+        async function confirmBooking() {
+            showLoading('Creating your booking...');
+            
+            try {
+                let bookingResult;
+                
+                if (USE_MOCK_DATA) {
+                    // Mock booking
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    bookingResult = {
+                        success: true,
+                        booking_id: Math.floor(Math.random() * 10000),
+                        total_price: currentGuide.price_per_day
+                    };
+                } else {
+                    // Real API call
+                    const response = await fetch(API_BASE_URL + 'create_booking.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: currentUser.user_id,
+                            guide_id: currentGuide.guide_id,
+                            city: searchData.city,
+                            booking_date: searchData.date,
+                            booking_time: searchData.time,
+                            duration_hours: 8
+                        })
+                    });
+                    
+                    bookingResult = await response.json();
+                    
+                    if (!bookingResult.success) {
+                        throw new Error(bookingResult.message || 'Failed to create booking');
+                    }
+                }
+                
+                // Show confirmation
+                document.getElementById('confirmBookingId').textContent = '#' + bookingResult.booking_id;
+                document.getElementById('confirmGuide').textContent = currentGuide.full_name;
+                document.getElementById('confirmCity').textContent = searchData.city;
+                document.getElementById('confirmDate').textContent = new Date(searchData.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('confirmTime').textContent = searchData.time;
+                document.getElementById('confirmPrice').textContent = '$' + bookingResult.total_price;
+                
+                // Log booking
+                console.log('✅ Booking Created:', {
+                    booking_id: bookingResult.booking_id,
+                    guide: currentGuide.full_name,
+                    city: searchData.city,
+                    date: searchData.date,
+                    time: searchData.time,
+                    price: bookingResult.total_price
+                });
+                
+                goToFrame(4);
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Failed to create booking. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+</html>
